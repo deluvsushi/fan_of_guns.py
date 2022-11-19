@@ -6,9 +6,8 @@ class FanOfGuns:
 	def __init__(
 			self,
 			sdk: str = "UnitySDK-2.48.180809",
-			title_id: str = "F080",
 			app_version: str = "1.1.02",
-			app_sign: str = "20:15:CE:96:C8:CD:B8:59:5E:5D:4A:04:21:79:EC:48"):
+			app_sign: str = "20:15:CE:96:C8:CD:B8:59:5E:5D:4A:04:21:79:EC:48") -> None:
 		self.api = "https://f080.playfabapi.com/Client"
 		self.headers = {
 			"user-agent": "UnityPlayer/2019.4.17f1 (UnityWebRequest/1.0, libcurl/7.52.0-DEV)",
@@ -17,16 +16,16 @@ class FanOfGuns:
 			"content-type": "application/json"
 		}
 		self.sdk = sdk
-		self.title_id = title_id
-		self.app_sign = app_sign
-		self.app_version = app_version
 		self.user_id = None
+		self.title_id = "F080"
+		self.app_sign = app_sign
 		self.session_ticket = None
+		self.app_version = app_version
 
-	def generate_device_id(self):
+	def generate_device_id(self) -> str:
 		return md5(urandom(15)).hexdigest()
 
-	def register(self):
+	def register(self) -> dict:
 		data = {
 			"AndroidDeviceId": self.generate_device_id(),
 			"CreateAccount": True,
@@ -41,31 +40,40 @@ class FanOfGuns:
 			json=data,
 			headers=self.headers).json()
 
-	def login_with_session_ticket(self, session_ticket: str):
+	def login_with_session_ticket(
+			self,
+			session_ticket: str) -> str:
 		self.session_ticket = session_ticket
 		self.headers["x-authorization"] = self.session_ticket
+		return self.session_ticket
 		
-	def get_account_info(self, username: str):
-		data = {"TitleDisplayName": username}
+	def get_account_info(self, username: str) -> dict:
+		data = {
+			"TitleDisplayName": username
+		}
 		return requests.post(
 			f"{self.api}/GetAccountInfo?sdk={self.sdk}",
 			json=data,
 			headers=self.headers).json()
 
-	def get_player_trades(self, status_filter: str):
-		data = {"StatusFilter": status_filter}
+	def get_player_trades(self, status_filter: str) -> dict:
+		data = {
+			"StatusFilter": status_filter
+		}
 		return requests.post(
 			f"{self.api}/GetPlayerTrades?sdk={self.sdk}",
 			json=data,
 			headers=self.headers).json()
 
-	def get_inventory(self):
+	def get_inventory(self) -> dict:
 		return requests.post(
 			f"{self.api}/GetUserInventory?sdk={self.sdk}",
 			headers=self.headers).json()
 
-	def update_username(self, username: str):
-		data = {"TitleDisplayName": username}
+	def update_username(self, username: str) -> dict:
+		data = {
+			"TitleDisplayName": username
+		}
 		return requests.post(
 			f"{self.api}/UpdateUserTitleDisplayName?sdk={self.sdk}",
 			json=data,
@@ -80,7 +88,7 @@ class FanOfGuns:
 			show_created: bool = True,
 			show_last_login: bool = True,
 			show_avatar_url: bool = True,
-			show_banned_until: bool = True):
+			show_banned_until: bool = True) -> dict:
 		data = {
 			"IncludeFacebookFriends": include_facebook_friends,
 			"IncludeSteamFriends": include_steam_friends,
@@ -101,7 +109,7 @@ class FanOfGuns:
 	def get_store_items(
 			self,
 			store_id: str = "Store1000",
-			catalog_version: str = None):
+			catalog_version: str = None) -> dict:
 		data = {
 			"CatalogVersion": catalog_version,
 			"StoreId": store_id
@@ -111,8 +119,10 @@ class FanOfGuns:
 			json=data,
 			headers=self.headers).json()
 
-	def get_catalog_items(self, catalog_version: str = "Items"):
-		data = {"CatalogVersion": catalog_version}
+	def get_catalog_items(self, catalog_version: str = "Items") -> dict:
+		data = {
+			"CatalogVersion": catalog_version
+		}
 		return requests.post(
 			f"{self.api}/GetCatalogItems?sdk={self.sdk}",
 			json=data,
@@ -121,7 +131,7 @@ class FanOfGuns:
 	def get_player_statistics(
 			self, 
 			statistic_names: list = ["score"],
-			statistic_name_versions: str = None):
+			statistic_name_versions: str = None) -> dict:
 		data = {
 			"StatisticNames": statistic_names,
 			"StatisticNameVersions": statistic_name_versions
@@ -131,8 +141,10 @@ class FanOfGuns:
 			json=data,
 			headers=self.headers).json()
 
-	def get_title_news(self, count: int = 10):
-		data = {"Count": count}
+	def get_title_news(self, count: int = 10) -> dict:
+		data = {
+			"Count": count
+		}
 		return requests.post(
 			f"{self.api}/GetTitleNews?sdk={self.sdk}",
 			json=data,
@@ -145,7 +157,7 @@ class FanOfGuns:
 			virtual_currency: str,
 			catalog_version: str = None,
 			character_id: str = None,
-			store_id: str = None):
+			store_id: str = None) -> dict:
 		data = {
 			"CatalogVersion": catalog_version,
 			"CharacterId": character_id,
@@ -164,7 +176,7 @@ class FanOfGuns:
 			item_instance_id: str,
 			catalog_version: str = "Items",
 			character_id: str = None,
-			key_item_instance_id: str = None):
+			key_item_instance_id: str = None) -> dict:
 		data = {
 			"CatalogVersion": catalog_version,
 			"CharacterId": character_id,
@@ -180,7 +192,7 @@ class FanOfGuns:
 			self, 
 			data: dict, 
 			permission: str,
-			keys_to_remove: str = None):
+			keys_to_remove: str = None) -> dict:
 		data = {
 			"Data": data,
 			"KeysToRemove": keys_to_remove,
@@ -199,7 +211,7 @@ class FanOfGuns:
 			dead: int = 0,
 			generate_play_stream_event: bool = False,
 			revision_selection: str = "Live",
-			specific_revision: int = 0):
+			specific_revision: int = 0) -> dict:
 		data = {
 			"FunctionName": "ch_money",
 			"FunctionParameter": {
@@ -217,8 +229,10 @@ class FanOfGuns:
 			json=data,
 			headers=self.headers).json()
 
-	def add_friend(self, username: str):
-		data = {"FriendTitleDisplayName": username}
+	def add_friend(self, username: str) -> dict:
+		data = {
+			"FriendTitleDisplayName": username
+		}
 		return requests.post(
 			f"{self.api}/AddFriend?sdk={self.sdk}",
 			json=data,
@@ -229,7 +243,7 @@ class FanOfGuns:
 			user_id: str,
 			generate_play_stream_event: bool = False,
 			revision_selection: str = "Live",
-			specific_revision: int = 0):
+			specific_revision: int = 0) -> dict:
 		data = {
 			"FunctionName": "friendRemowe1",
 			"FunctionParameter": {
@@ -244,7 +258,7 @@ class FanOfGuns:
 			json=data,
 			headers=self.headers).json()
 
-	def update_profile_status(self, status: str):
+	def update_profile_status(self, status: str) -> dict:
 		data = {
 			"Data": {
 				"status": status
